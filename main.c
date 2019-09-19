@@ -8,8 +8,8 @@ int main()
 
 	RotateMotor(OUT_BC, 25, convert_cm(62));
     // enough power to let the arm release
-     RotateMotor(OUT_A, -25, 80);
-    //RotateMotor(OUT_A, -25, 75);
+     //RotateMotor(OUT_A, -25, 80);
+    RotateMotor(OUT_A, -5, 72);
     
     reset_arm();
 
