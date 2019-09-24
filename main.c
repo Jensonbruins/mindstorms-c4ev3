@@ -1,5 +1,13 @@
 #include "ev3.h"
 
+// Declaring functions after main
+void crane_mission();
+void reset_arm();
+int convert_cm(int amount);
+void turn_right();
+void turn_left();
+void dance();
+
 /*
  * function: main()
  * Runs when program is init
