@@ -1,70 +1,87 @@
 #include "ev3.h"
 
-// Declaring functions after main
+// Mission declaration
 void crane_mission();
-void reset_arm();
-int convert_cm(int amount);
-void turn_right();
-void turn_left();
-void dance();
+void traffic_jam();
 
-/*
- * function: main()
- * Runs when program is init
- */
-int main()
-{
-	// Initialize EV3 lib
+// conversions
+int convert_cm(int amount);
+
+// Movements for the bot
+void reset_arm();
+void forward(int amount);
+void backward(int amount);
+void turn_left();
+void turn_right();
+void turn_drive(int motor_a, int motor_b,int change_speed);
+
+int main() {
+	
 	InitEV3();
 
-	// Reset arm to zero for program
+	setAllSensorMode(GYRO_ANG, NO_SEN, NO_SEN, NO_SEN);
+
 	reset_arm();
 
-	crane_mission();
+	//crane_mission();
+	traffic_jam();
 
-    	FreeEV3();
+	// Disable everything before shutdown
+	Off(OUT_BC);
+	FreeEV3();
+	
 	return 0;
 }
 
 /*
- * function: crane_mission()
+ * crane_mission()
  * Runs the crane mission from base
  */
 void crane_mission() {
-	
-	// Start driving to first lever
-	RotateMotor(OUT_BC, 20, convert_cm(30));
-	turn_right();
-	RotateMotor(OUT_BC, 15, convert_cm(10));
+	// Drive towards right arm
+	forward(28);
 	turn_left();
-	RotateMotor(OUT_BC, 20, convert_cm(32));
+	forward(40);
 	
-	// Start lever up
-	RotateMotor(OUT_A, -10, 72);
+	// Start right arm
+	RotateMotor(OUT_A, -10, 88);
+	forward(8);
+	RotateMotor(OUT_A, 10, 21);
 	Wait(MS_500);
-	reset_arm();
+	backward(10);
 	
-	// Start driving to second lever
-	RotateMotor(OUT_BC, -20, convert_cm(15));
-	turn_left();
-	RotateMotor(OUT_BC, 15, convert_cm(10));
-	turn_right();
-	RotateMotor(OUT_BC, 20, convert_cm(15));
-		
-	// Start lever up
-	RotateMotor(OUT_A, -20, 80);
-	Wait(MS_500);
+	// Reset arm for next mission
 	reset_arm();
 
-	// Move away from obstacles
-	RotateMotor(OUT_BC, -20, convert_cm(15));
-	
-	// Shutdown motors
-	Off(OUT_ALL);
+	//Drive towards left arm
+	turn_left();
+	forward(10);
+	turn_right();
+	forward(10);
+
+	// Start left arm
+	RotateMotor(OUT_A, -10, 60);
+	reset_arm();
+
+	// Drive away from left arm
+	backward(60);
 }
 
 /*
- * function: reset_arm()
+ * traffic_jam()
+ * This will start the traffic mission
+ */
+void traffic_jam() {
+	forward(74);
+	turn_right();
+	forward(1);
+	
+	RotateMotor(OUT_A, -100, 70);
+	Wait(MS_500);
+}
+
+/*
+ * reset_arm()
  * Resets the arm to its downright position
  */
 void reset_arm() {
@@ -73,9 +90,8 @@ void reset_arm() {
 	Off(OUT_A);
 }
 
-
 /*
- * Function: convert_cm(<amount of cm>)
+ * convert_cm(<amount of cm>)
  * Converts a given amount of cm to wheel degrees
  */
 int convert_cm(int amount) {
@@ -87,54 +103,113 @@ int convert_cm(int amount) {
 	return retval;
 }
 
-/*
- * function: turn_left()
- * Will turn the bot 90deg left
- */
-void turn_left() {
-	OnFwdReg(OUT_C, 25);
-	OnRevReg(OUT_B, 25);
-	Wait(MS_700);
-	Wait(MS_50);
-	Off(OUT_BC);
+void forward(int amount) {
+	amount = convert_cm(amount);
+	RotateMotor(OUT_BC, 15, amount);
 }
 
-/*
- * function: turn_right()
- * Will turn the bot 90deg right
- */
+void backward(int amount) {
+	amount = convert_cm(amount);
+	RotateMotor(OUT_BC, -15, amount);
+}
+
 void turn_right() {
-	OnFwdReg(OUT_B, 25);
-	OnRevReg(OUT_C, 25);
-	Wait(MS_700);
-	Wait(MS_50);
-	Off(OUT_BC);
+	// Declaration for all the variables used
+	int gyro_value, gyro_offset, gyro_check_start_one, gyro_check_start_two, gyro_check_start_three, gyro_check_stop_one, gyro_check_stop_two, gyro_check_stop_three, gyro_check_final;
+	
+	// Create an offset value
+	gyro_offset = readSensor(IN_1);
+
+	// Filling stops with values
+	gyro_check_start_one = 10;
+	gyro_check_start_two = 20;
+	gyro_check_start_three = 30;
+	gyro_check_stop_one = 60;
+	gyro_check_stop_two = 70;
+	gyro_check_stop_three = 80;
+	gyro_check_final = 87;
+	
+	// The loop that does stuff
+	while(1)
+	{
+		// Reading out the gyro value with offset
+		gyro_value = readSensor(IN_1) - gyro_offset;
+		
+		// Based on gyro value do some turn stuff
+		if (gyro_value == 0) {
+			turn_drive(OUT_B,OUT_C,2);
+		} else if (gyro_value >= gyro_check_start_one && gyro_value < gyro_check_start_two) {
+			turn_drive(OUT_B, OUT_C, 5);
+		} else if (gyro_value >= gyro_check_start_two && gyro_value < gyro_check_start_three) {
+			turn_drive(OUT_B, OUT_C, 10);
+		} else if (gyro_value >= gyro_check_start_three && gyro_value < gyro_check_stop_one) {
+			turn_drive(OUT_B, OUT_C, 12);
+		} else if (gyro_value >= gyro_check_stop_one && gyro_value < gyro_check_stop_two) {
+			turn_drive(OUT_B,OUT_C,7);
+		} else if (gyro_value >= gyro_check_stop_two && gyro_value < gyro_check_stop_three) {
+			turn_drive(OUT_B,OUT_C, 5);	
+		} else if (gyro_value >= gyro_check_final) {
+			Off(OUT_ALL);
+			break;
+		}
+
+		// This is to prevent the stupid ev3 brick from crashing
+		Wait(10);
+	}
+	// Calm the bot down after turning because it needs it
+	Wait(SEC_1);
 }
 
-/*
- * function: dance()
- * will make the bot party 
- */
-void dance() {
-	
-	// Turning
-	turn_left();
-	turn_right();
-	turn_right();
-	turn_left();
-	
-	// Arm
-	RotateMotor(OUT_A, -100, 70);
-	RotateMotor(OUT_A, -100, 35);
-	RotateMotor(OUT_A, 100, 35);
-	RotateMotor(OUT_A, -100, 35);
-	reset_arm();
 
-	// Sound
-	PlaySound(SOUND_UP);
-	PlaySound(SOUND_CLICK);
-	PlaySound(SOUND_DOUBLE_BEEP);
-	PlaySound(SOUND_FAST_UP);
-	StopSound();
+void turn_left() {
+	// Declaration for all the variables used
+	int gyro_value, gyro_offset, gyro_check_start_one, gyro_check_start_two, gyro_check_start_three, gyro_check_stop_one, gyro_check_stop_two, gyro_check_stop_three, gyro_check_final;
+	
+	// Create an offset value
+	gyro_offset = readSensor(IN_1);
+
+	// Filling stops with values
+	gyro_check_start_one = -10;
+	gyro_check_start_two = -20;
+	gyro_check_start_three = -30;
+	gyro_check_stop_one = -60;
+	gyro_check_stop_two = -70;
+	gyro_check_stop_three = -80;
+	gyro_check_final = -90;
+	
+	// The loop that does stuff
+	while(1)
+	{
+		// Reading out the gyro value with offset
+		gyro_value = readSensor(IN_1) - gyro_offset;
+		
+		// Based on gyro value do some turn stuff
+		if (gyro_value == 0) {
+			turn_drive(OUT_C,OUT_B,2);
+		} else if (gyro_value <= gyro_check_start_one && gyro_value > gyro_check_start_two) {
+			turn_drive(OUT_C, OUT_B, 5);
+		} else if (gyro_value <= gyro_check_start_two && gyro_value > gyro_check_start_three) {
+			turn_drive(OUT_C, OUT_B, 10);
+		} else if (gyro_value <= gyro_check_start_three && gyro_value > gyro_check_stop_one) {
+			turn_drive(OUT_C, OUT_B, 12);
+		} else if (gyro_value <= gyro_check_stop_one && gyro_value > gyro_check_stop_two) {
+			turn_drive(OUT_C,OUT_B,7);
+		} else if (gyro_value <= gyro_check_stop_two && gyro_value > gyro_check_stop_three) {
+			turn_drive(OUT_C,OUT_B, 5);	
+		} else if (gyro_value <= gyro_check_final) {
+			Off(OUT_ALL);
+			break;
+		}
+
+		// This is to prevent the stupid ev3 brick from crashing
+		Wait(10);
+	}
+	// Calm the bot down after turning because it needs it
+	Wait(SEC_1);
 }
 
+
+void turn_drive(int motor_a, int motor_b ,int change_speed) {
+	OnFwdReg(motor_a, change_speed);
+	OnRevReg(motor_b, change_speed);
+}
