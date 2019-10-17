@@ -8,7 +8,6 @@ void swing();
 void start_mission();
 // conversions
 int convert_cm(int amount);
-
 // Movements for the bot
 void reset_arm();
 void forward(int amount);
@@ -24,6 +23,7 @@ int main() {
 	setAllSensorMode(GYRO_ANG, TOUCH_PRESS, NO_SEN, NO_SEN);
 
 	reset_arm();
+
 	crane_mission();
     start_mission();
     traffic_jam();
@@ -34,7 +34,8 @@ int main() {
 	Off(OUT_BC);
 	FreeEV3();
 	
-	return 0;
+
+    return 0;
 }
 
 /*
@@ -45,7 +46,7 @@ void crane_mission() {
 	// Drive towards right arm
 	forward(28);
 	turn_left();
-	forward(40);
+	forward(41);
 	
 	// Start right arm
 	RotateMotor(OUT_A, -10, 88);
@@ -65,7 +66,7 @@ void crane_mission() {
 
 	// Start left arm
 	RotateMotor(OUT_A, -10, 60);
-    Wait(MS_800);
+    Wait(MS_600);
 	reset_arm();
 
 	// Drive away from left arm
@@ -82,7 +83,7 @@ void traffic_jam() {
 	forward(1);
 	RotateMotor(OUT_A, -100, 70);
 	Wait(MS_500);
-    forward(6);
+    forward(11);
     Wait(MS_500);
     turn_right();
     forward(75);
@@ -97,7 +98,7 @@ void swing(){
     RotateMotor(OUT_A, -100, 70);
     forward(15);
     turn_left();
-    backward(150);
+    backward(155);
     reset_arm();
 }
 /*
@@ -112,11 +113,10 @@ void reset_arm() {
 
 void start_mission() {
     do {
-         if (readSensor(IN_2) == 1) {
-             Wait(MS_800);
-             break;
+        if (readSensor(IN_2) == 1) {
+            Wait(MS_800);
         }
-    }while (readSensor(IN_2) ==0);
+     } while (readSensor(IN_2) == 0);
 }
 
 /*
@@ -134,7 +134,7 @@ int convert_cm(int amount) {
 
 void forward(int amount) {
 	amount = convert_cm(amount);
-	RotateMotor(OUT_BC, 15, amount);
+	RotateMotor(OUT_BC, 24, amount);
 }
 
 void backward(int amount) {
