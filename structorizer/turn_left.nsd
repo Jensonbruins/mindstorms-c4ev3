@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns:nsd="https://structorizer.fisch.lu" version="3.30-01" preRepeat="until " postFor="to" preReturn="return" postForIn="in" preWhile="while " output="OUTPUT" input="INPUT" preFor="for" preExit="exit" preLeave="leave" ignoreCase="true" preThrow="throw" preForIn="foreach" stepFor="by" author="jenson" created="2019-10-23" changedby="jenson" changed="2019-10-23" origin="Structorizer 3.30-01 / C99Parser: &#34;/home/jenson/ev3_docker/src/main.c&#34;" text="&#34;turn_left()&#34;" comment="" color="ffffff" type="sub" style="nice">
+	<children>
+		<call text="&#34;gyro_offset &#60;- readSensor(IN_1)&#34;" comment="" color="ffffff" disabled="0"></call>
+		<instruction text="&#34;gyro_check_start_one &#60;-  -10&#34;" comment="" color="ffffff" rotated="0" disabled="0"></instruction>
+		<instruction text="&#34;gyro_check_start_two &#60;-  -20&#34;" comment="" color="ffffff" rotated="0" disabled="0"></instruction>
+		<instruction text="&#34;gyro_check_start_three &#60;-  -30&#34;" comment="" color="ffffff" rotated="0" disabled="0"></instruction>
+		<instruction text="&#34;gyro_check_stop_one &#60;-  -60&#34;" comment="" color="ffffff" rotated="0" disabled="0"></instruction>
+		<instruction text="&#34;gyro_check_stop_two &#60;-  -70&#34;" comment="" color="ffffff" rotated="0" disabled="0"></instruction>
+		<instruction text="&#34;gyro_check_stop_three &#60;-  -80&#34;" comment="" color="ffffff" rotated="0" disabled="0"></instruction>
+		<instruction text="&#34;gyro_check_final &#60;-  -86&#34;" comment="" color="ffffff" rotated="0" disabled="0"></instruction>
+		<while text="&#34;zolang (1)&#34;" comment="&#34;&#34;" color="ffffff" disabled="0">
+			<qWhile>
+				<instruction text="&#34;gyro_value &#60;- readSensor(IN_1) - gyro_offset&#34;" comment="" color="ffffff" rotated="0" disabled="0"></instruction>
+				<alternative text="&#34;gyro_value == 0&#34;" comment="&#34;&#34;" color="ffffff" disabled="0">
+					<qTrue>
+						<call text="&#34;turn_drive(OUT_C, OUT_B, 7)&#34;" comment="" color="ffffff" disabled="0"></call>
+					</qTrue>
+					<qFalse>
+						<alternative text="&#34;gyro_value &#60;= gyro_check_start_one &amp;&amp; gyro_value &#62; gyro_check_start_two&#34;" comment="&#34;&#34;" color="ffffff" disabled="0">
+							<qTrue>
+								<call text="&#34;turn_drive(OUT_C, OUT_B, 9)&#34;" comment="" color="ffffff" disabled="0"></call>
+							</qTrue>
+							<qFalse>
+								<alternative text="&#34;gyro_value &#60;= gyro_check_start_two &amp;&amp; gyro_value &#62; gyro_check_start_three&#34;" comment="&#34;&#34;" color="ffffff" disabled="0">
+									<qTrue>
+										<call text="&#34;turn_drive(OUT_C, OUT_B, 10)&#34;" comment="" color="ffffff" disabled="0"></call>
+									</qTrue>
+									<qFalse>
+										<alternative text="&#34;gyro_value &#60;= gyro_check_start_three &amp;&amp; gyro_value &#62; gyro_check_stop_one&#34;" comment="&#34;&#34;" color="ffffff" disabled="0">
+											<qTrue>
+												<call text="&#34;turn_drive(OUT_C, OUT_B, 12)&#34;" comment="" color="ffffff" disabled="0"></call>
+											</qTrue>
+											<qFalse>
+												<alternative text="&#34;gyro_value &#60;= gyro_check_stop_one &amp;&amp; gyro_value &#62; gyro_check_stop_two&#34;" comment="&#34;&#34;" color="ffffff" disabled="0">
+													<qTrue>
+														<call text="&#34;turn_drive(OUT_C, OUT_B, 7)&#34;" comment="" color="ffffff" disabled="0"></call>
+													</qTrue>
+													<qFalse>
+														<alternative text="&#34;gyro_value &#60;= gyro_check_stop_two &amp;&amp; gyro_value &#62; gyro_check_stop_three&#34;" comment="&#34;&#34;" color="ffffff" disabled="0">
+															<qTrue>
+																<call text="&#34;turn_drive(OUT_C, OUT_B, 5)&#34;" comment="" color="ffffff" disabled="0"></call>
+															</qTrue>
+															<qFalse>
+																<alternative text="&#34;gyro_value &#60;= gyro_check_final&#34;" comment="" color="ffffff" disabled="0">
+																	<qTrue>
+																		<call text="&#34;Off(OUT_ALL)&#34;" comment="" color="ffffff" disabled="0"></call>
+																		<jump text="&#34;break&#34;" comment="&#34;&#34;" color="ffffff" disabled="0"></jump>
+																	</qTrue>
+																	<qFalse color="ffffff">
+																	</qFalse>
+																</alternative>
+															</qFalse>
+														</alternative>
+													</qFalse>
+												</alternative>
+											</qFalse>
+										</alternative>
+									</qFalse>
+								</alternative>
+							</qFalse>
+						</alternative>
+					</qFalse>
+				</alternative>
+				<call text="&#34;Wait(10)&#34;" comment="" color="ffffff" disabled="0"></call>
+			</qWhile>
+		</while>
+		<call text="&#34;Wait(SEC_1)&#34;" comment="" color="ffffff" disabled="0"></call>
+	</children>
+</root>

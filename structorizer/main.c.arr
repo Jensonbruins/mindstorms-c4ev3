@@ -1,0 +1,12 @@
+715,204,"/home/jenson/structorizer_ev3/backward.nsd","backward",1,1
+793,12,"/home/jenson/structorizer_ev3/convert_cm.nsd","convert_cm",1,1
+284,454,"/home/jenson/structorizer_ev3/crane_mission.nsd","crane_mission",0,0
+1053,13,"/home/jenson/structorizer_ev3/forward.nsd","forward",1,1
+0,0,"/home/jenson/structorizer_ev3/main.nsd","main",-1,-1
+491,200,"/home/jenson/structorizer_ev3/reset_arm.nsd","reset_arm",0,0
+488,0,"/home/jenson/structorizer_ev3/start_mission.nsd","start_mission",0,0
+4,458,"/home/jenson/structorizer_ev3/swing.nsd","swing",0,0
+555,450,"/home/jenson/structorizer_ev3/traffic_jam.nsd","traffic_jam",0,0
+1028,203,"/home/jenson/structorizer_ev3/turn_drive.nsd","turn_drive",3,3
+838,669,"/home/jenson/structorizer_ev3/turn_right.nsd","turn_right",0,0
+1406,14,"/home/jenson/structorizer_ev3/turn_left.nsd","turn_left",0,0
