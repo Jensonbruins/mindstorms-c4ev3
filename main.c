@@ -138,7 +138,6 @@ void reset_arm() {
  * start_mission()
  * Waits for the users input to execute the next mission
  */
-
 void start_mission() {
 	// Temporary fix should have a stop button implemented
 	// The if statement is useless?
